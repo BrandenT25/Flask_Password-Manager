@@ -15,10 +15,11 @@ def log_user_in(user):
 @auth.route('/home')
 def home():
     return render_template('home.html')
+
 @auth.route('/dashboard')
 @login_required
 def dashboard():
-    return f"Hello, {current_user.username}"
+    return render_template('dashboard.html')
 
 
 @auth.route('/register', methods=['GET', 'POST'])
