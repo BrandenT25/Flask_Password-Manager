@@ -2,7 +2,8 @@ from flask import Flask, request, redirect, flash, render_template, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin, logout_user, login_user, login_required, current_user
-
+import boto3
+import json 
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -15,9 +16,11 @@ def load_user(user_id):
     return users.query.get(int(user_id))
 
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object("config.Config")
+    
 
     db.init_app(app)
     bcrypt.init_app(app)
@@ -26,5 +29,12 @@ def create_app():
 
     from .auth.routes import auth
     app.register_blueprint(auth)
+    from .models import users
+
+    with app.app_context():
+        db.create_all()
+
+
 
     return app
+
