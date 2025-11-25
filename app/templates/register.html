@@ -62,14 +62,20 @@
         }
 
         .flashes {
-            list-style: none;
+            background: rgba(239, 68, 68, 0.15); /* light red background */
+            color: #ff4d4d;                      /* TEXT COLOR */
+            border: 1px solid #ef4444;           /* border color */
+            padding: 12px 15px;
+            border-radius: 8px;
             margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none; /* hidden until JS shows it */
         }
 
         .flashes li {
             background: rgba(239, 68, 68, 0.1);
             border-left: 4px solid #ef4444;
-            color: #fca5a5;
+            color: red;
             padding: 12px 15px;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -192,52 +198,117 @@
             h1 {
                 font-size: 1.75rem;
             }
-        }
+        } 
+        #flashes.flash-box,
+        #flashes.flash-box * {
+          color: #ff4d4d !important;
+          background: rgba(239, 68, 68, 0.15) !important;
+          border-left: 4px solid #ef4444 !important;
+}
+
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">CV</div>
-        <h1>Register</h1>
-        <p class="subtitle">Create your CodexVault account</p>
-        
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="flashes">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        
-        <form method="POST" action="{{ url_for('auth.register') }}">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-            
-            <label for="password">Password</label>
-            <div class="input-wrapper">
-                <input type="password" id="password" name="password" class="password-input" required>
-                <button type="button" class="toggle-password" onclick="togglePassword('password', this)">
-                    Show
-                </button>
-            </div>
-            
-            <label for="confirm_password">Confirm Password</label>
-            <div class="input-wrapper">
-                <input type="password" id="confirm_password" name="confirm_password" class="password-input" required>
-                <button type="button" class="toggle-password" onclick="togglePassword('confirm_password', this)">
-                    Show
-                </button>
-            </div>
-            
-            <button type="submit">Create Account</button>
-        </form>
-        
-        <a href="home">
-            <button class="back-btn">Back to Home</button>
-        </a>
-    </div>
+    <div class="logo">CV</div>
+    <h1>Register</h1>
+    <p class="subtitle">Create your CodexVault account</p>
+
+    <!-- Flash error box -->
+    <div id="flashes" class="flash-box"></div>
+
+    <form id="register-form">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username">
+
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+            <input type="password" id="password" name="password" class="password-input">
+            <button type="button" class="toggle-password" onclick="togglePassword('password', this)">
+                Show
+            </button>
+        </div>
+
+        <label for="confirm_password">Confirm Password</label>
+        <div class="input-wrapper">
+            <input type="password" id="confirm_password" name="confirm_password" class="password-input" >
+            <button type="button" class="toggle-password" onclick="togglePassword('confirm_password', this)">
+                Show
+            </button>
+        </div>
+
+        <button type="submit">Create Account</button>
+    </form>
+
+    <a href="home">
+        <button class="back-btn">Back to Home</button>
+    </a>
+</div>
+
+
+
+  <script>
+    document.getElementById("register-form").addEventListener('submit', async (e) => {e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const confirm_password = document.getElementById("confirm_password").value;
+      try{
+        const response = await fetch('/api/auth/register',{
+          method: 'POST',
+          headers: {
+            'content-type':'application/json'},
+          body: JSON.stringify({ username, password, confirm_password }) 
+        })
+      const data = await response.json();
+      if (response.ok){
+        console.log("registration sucessfull");
+        console.log("routing to login page");
+        window.location.href = '/login';      
+      }else{
+        console.log("registration failed");
+        errorMessage = data.error
+        document.getElementById("flashes").textContent = errorMessage;
+      }
+
+
+      }catch(error){
+        console.log("error in registration process");
+        document.getElementById("flashes").textContent = "Unexpected Server Error";
+
+      } 
+
+
+
+
+
+    })
+
+
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <script>
         function togglePassword(inputId, button) {

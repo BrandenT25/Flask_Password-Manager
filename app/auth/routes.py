@@ -41,11 +41,11 @@ def api_register():
     username = data.get('username')
     password = data.get('password')
     confirm_password = data.get('confirm_password')
-    if not confirm_password or password or username:
+    if not confirm_password or not password or not username:
         return jsonify({"error": "please make sure all fields are filled out"}), 400
     if confirm_password != password:
         return jsonify({"error": "password and confirm password dont match"}), 400
-    existing_user = users.query.filter_by(username=username).first()
+    existing_user = users.query.filter_by(username=username.lower()).first()
     if existing_user:
         return jsonify({"error": "this username is already taken please choose a different one"}), 400
     
@@ -54,18 +54,18 @@ def api_register():
     try:
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({"Sucess": "User sucessfully logged in"}), 200
+        return jsonify({"Sucess": "User sucessfully Registered"}), 200
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"Error": "There was an error with registering try again"}), 200
+        return jsonify({"Error": "There was an error with registering try again"}), 400
         
 
 
 @auth.route('/api/auth/login' , methods=['POST'] )
 def api_login():
     data = request.get_json()
-    username = data.get('username')
+    username = data.get('username').lower()
     password = data.get('password')
     if not password or not username:
         return jsonify({"error":"Please make sure all fields are filled out"}), 400 
