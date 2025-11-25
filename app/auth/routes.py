@@ -27,10 +27,13 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
         if not password or not username:
             flash("Please input both a username and password")
             return render_template('register.html')
-
+        if password != confirm_password:
+            flash("Please make sure your password matches the confirm password")
+            return render_template('register.html')
 
 
         existing_user = users.query.filter_by(username=username).first()
