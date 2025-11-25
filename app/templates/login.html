@@ -163,17 +163,9 @@
         <h1>Login</h1>
         <p class="subtitle">Welcome back to CodexVault</p>
         
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class="flashes">
-                    {% for msg in messages %}
-                    <li>{{ msg }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
+        <div id="flashes"></div>
         
-        <form method="POST" action="{{url_for('auth.login')}}">
+        <form method="POST" id="login-form">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>
             
@@ -182,6 +174,62 @@
             
             <button type="submit">Log In</button>
         </form>
+
+
+
+
+        <script>
+            document.getElementById("login-form").addEventListener('submit', async (e) => {e.preventDefault();
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+
+
+                        },
+                        body: JSON.stringify({ username, password }),
+                        credentials: 'include'
+                    });
+                    const data = await response.json();
+                    
+
+                    if(response.ok) {
+                        console.log("log in sucessful");
+                        console.log("Access Token: ", data.access_token );
+                        console.log("Refresh Token: ", data.refresh_token );
+
+
+                        localStorage.setItem("access_token", data.access_token);
+                        localStorage.setItem("refresh_token", data.refresh_token)
+                        window.location.href = "/dashboard"
+
+                    }else{
+                        console.log("Login Failed");
+                        const errorMessage = data.error || "Invalid Credentials";
+                        document.getElementById("flashes").textContent = errorMessage;
+
+
+
+
+                    }
+                }catch(error){
+                    console.log('Network error', error);
+                    document.getElementById("flashes").textContent = 'Connection Failed try again. ';
+
+                }
+
+
+
+
+
+
+        })
+
+        </script>
         
         <a href="home">
             <button class="back-btn">Back to Home</button>
