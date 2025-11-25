@@ -1,0 +1,5 @@
+flask_sqlalchemy
+flask_bcrypt
+flask_login
+boto3
+psycopg2
