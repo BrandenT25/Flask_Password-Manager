@@ -21,7 +21,9 @@ def home():
 @auth.route('/dashboard')
 @jwt_required()
 def dashboard():
-    return render_template('dashboard.html')
+    userid =  get_jwt_identity()
+    user = users.query.filter_by(id=userid).first()
+    return render_template('dashboard.html', username=user.username)
 
 
 @auth.route('/register')
@@ -82,6 +84,11 @@ def api_login():
     set_access_cookies(response, access_token)
     set_refresh_cookies(response, refresh_token)
     return response
+
+#@auth.route('/api/auth/fetch-user-info', methods=['POST'])
+#def api_fetch_user():
+    #data = request.get_json()
+
 
 
 @auth.route('/logout')

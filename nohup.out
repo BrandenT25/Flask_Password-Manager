@@ -1,0 +1,5 @@
+[0.631] [PARSE ERROR] Escape codes to resize text area are not supported
+[48.392] [PARSE ERROR] Escape codes to resize text area are not supported
+[48.392] [PARSE ERROR] Invalid character in CSI: 0x1b (0x1b), ignoring the sequence
+[48.392] [PARSE ERROR] Unknown char after ESC: 0x5c
+[48.415] [PARSE ERROR] Escape codes to resize text area are not supported
